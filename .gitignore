@@ -1,0 +1,8 @@
+_scratch.py
+test_runs/
+notes/
+todo.md
+**/compiled_data/**/*.csv
+**/compiled_data/**/*.json
+compiled_data/*.json
+__pycache__/
