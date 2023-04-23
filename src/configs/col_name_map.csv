@@ -1,5 +1,4 @@
 ,PUMS_COL_NAME,column
-3,PUMA,PUMSAreaCode
 5,ST,State
 243,AGEP,Age
 244,CIT,Citizenship
@@ -20,7 +19,6 @@
 265,HINS6,VeteransAffairs
 266,HINS7,IndianHealthService
 268,JWMNP,WorkCommuteTime
-269,JWRIP,VehicleOccupancy
 270,JWTR,TransportationToWork
 271,LANX,NonEnglishLanguage
 272,MAR,MaritalStatus
@@ -51,7 +49,6 @@
 335,PAOC,PresenceAndAgeOfChildren
 337,PINCP,UnadjustedTotalPersonIncome
 339,POVPIP,IncomeToPovertyRatioRecode
-340,POWPUMA,PlaceOfWorkPUMA
 341,POWSP,PlaceOfWorkStateOrForeignRecode
 342,PRIVCOV,PrivateHealthInsuranceCoverageRecode
 343,PUBCOV,PublicHealthCoverageRecode

@@ -4,7 +4,8 @@ from os import listdir, remove, path
 base_path = './compiled_data'
 dirs = ['dictionaries',
         'staged',
-        'types',
+        'test',
+        'train',
         'val_errors']
 
 for dir in dirs:

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import json
 import re
-from _constants import combinations
+from _constants import COMBINATIONS, MAX_LENGTH
 from dictionary_utils import get_values_dict, prefix_val, skip_map_columns, \
     custom_transform_columns
 
@@ -84,27 +84,18 @@ def create_transform_output(combination):
     dictionary equivalent. 
     Output: compiled_data/staged/{year}_{type}_{state}.csv
     """
-    [y, state, type] = combination
+    [y, state, survey_type] = combination
     year = int(y)
-    print(f'\ncreate_transform_output({year}, {state}, {type})')
-    data = pd.read_csv(f'./compiled_data/surveys/{year}_{type}_{state}.csv')
-    defined_types = pd.read_json(
-        f'./compiled_data/types/{str(year)}.json', orient='index')[0]
-    data_type = {}
+    print(f'\ncreate_transform_output({year}, {state}, {survey_type})')
+    data = pd.read_csv(f'./compiled_data/surveys/{year}_{survey_type}_{state}.csv')
 
-    # drop columns & set data types
+    # drop columns
     use_cols = pd.read_csv('./configs/col_name_map.csv')
     drop_cols = []
 
     for col in data:
         if col not in list(use_cols['PUMS_COL_NAME']):
             drop_cols.append(col)
-        else:
-            pretty_name = use_cols.loc[use_cols['PUMS_COL_NAME'] == col] \
-                ['column'].item()
-
-            if pretty_name in defined_types:
-                data_type[pretty_name] = defined_types[pretty_name]
 
     data.drop(drop_cols, axis=1, inplace=True)
     
@@ -112,6 +103,11 @@ def create_transform_output(combination):
     with open('./compiled_data/dictionaries/col_name_map.json') as json_file:
         column_name_map = json.load(json_file)
         data = data.rename(column_name_map, axis='columns')
+
+    # trim rows
+    has_max_len = isinstance(MAX_LENGTH, int) and MAX_LENGTH > 0
+    if has_max_len and len(data.index) > MAX_LENGTH:
+        data = data.tail(MAX_LENGTH)
 
     # transform column values
     try:
@@ -121,20 +117,13 @@ def create_transform_output(combination):
                 data[col] = data[col].map(
                     lambda val: set_val_from_dictionary(col, val, vals_dict)
                 )
-            elif col in data_type:
-                data[col] = data[col].map(
-                    lambda val: normalize_null_vals(val)
-                )
     except Exception as e:
         print('\n\nEXCEPTION')
         print(e)
 
-    # set data types
-    data = data.astype(data_type)
-
     # log value errors
     if error_tuples:
-        error_csv_path = f'val_errors/{year}_{state}_{type}.csv'
+        error_csv_path = f'val_errors/{year}_{state}_{survey_type}.csv'
         with open(error_csv_path, 'w+') as log_file:
             log_file.write('value,column\n')
             for error_tuple in error_tuples:
@@ -164,7 +153,7 @@ def create_transform_output(combination):
         '70-79',
         '80-89',
         '90-100+']
-
+    
     data['weekly_hrs_worked'] = pd.Categorical(
         pd.cut(
             data['AvgHoursWorkedPerWeek'],
@@ -176,7 +165,7 @@ def create_transform_output(combination):
         ordered=True)
 
     # write to compiled_data/staged directors
-    data.to_csv(f'./compiled_data/staged/{year}_{type}_{state}.csv', index=False)
+    data.to_csv(f'./compiled_data/staged/{year}_{survey_type}_{state}.csv', index=False)
 
 
 if __name__ == "__main__":
@@ -190,18 +179,21 @@ if __name__ == "__main__":
         create_name_map_json()
         split_dictionaries()
 
-        # transform responses to dict values
+        ## transform responses to dict values
         with Pool() as pool:
             try:
-                pool.map(create_transform_output, combinations)
+                pool.map(create_transform_output, COMBINATIONS)
             except Exception as e:
                 pool.terminate()
         
-        # prepare class label
+        ## prepare class label
         staged = './compiled_data/staged'
         files = glob.glob(os.path.join(staged, "*.csv"))
         data = pd.concat((pd.read_csv(f) for f in files))
         data.reset_index()
+
+        for file in files:
+            os.remove(file)
 
         data.to_csv(f'./compiled_data/staged/all.csv', index=False)
 
