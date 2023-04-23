@@ -45,7 +45,7 @@ def set_val_from_dictionary(col, reported_val, dict):
 
     # normalize return for null and nan
     if is_empty_value(reported_val):
-        return ''
+        return np.NaN
 
     # normalize numeric values to standard number string
     if isinstance(reported_val, float):
@@ -150,11 +150,42 @@ def create_transform_output(combination):
         [year] * len(data), index=data.index, name='Year')
     data = pd.concat([data, year_series], axis=1)
 
+    # drop nan class
+    data.dropna(
+        subset=['AvgHoursWorkedPerWeek'],
+        inplace=True)
+
+    # bin hours worked per week
+    hr_bins = np.arange(0, 101, 10)
+    hr_labels = [
+        '0-9',
+        '10-19',
+        '20-29',
+        '30-39',
+        '40-49',
+        '50-59',
+        '60-69',
+        '70-79',
+        '80-89',
+        '90-100+']
+
+    data['weekly_hrs_worked'] = pd.Categorical(
+        pd.cut(
+            data['AvgHoursWorkedPerWeek'],
+            bins=hr_bins,
+            labels=hr_labels,
+            include_lowest=True
+        ),
+        categories=hr_labels,
+        ordered=True)
+
     # write to compiled_data/staged directors
-    data.to_csv(f'./compiled_data/staged/{year}_{type}_{state}.csv')
+    data.to_csv(f'./compiled_data/staged/{year}_{type}_{state}.csv', index=False)
 
 
 if __name__ == "__main__":
+    import glob
+    import os
     from multiprocessing import Pool
     from process_timer import time_execution
     from dictionary_utils import create_name_map_json, split_dictionaries
@@ -163,11 +194,20 @@ if __name__ == "__main__":
         create_name_map_json()
         split_dictionaries()
 
+        # transform responses to dict values
         with Pool() as pool:
             try:
                 pool.map(create_transform_output, combinations)
             except Exception as e:
                 pool.terminate()
+        
+        # prepare class label
+        staged = './compiled_data/staged'
+        files = glob.glob(os.path.join(staged, "*.csv"))
+        data = pd.concat((pd.read_csv(f) for f in files))
+        data.reset_index()
+
+        data.to_csv(f'./compiled_data/staged/all.csv', index=False)
 
     time_execution(process)
 
