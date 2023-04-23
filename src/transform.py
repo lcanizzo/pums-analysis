@@ -113,10 +113,6 @@ def create_transform_output(combination):
         column_name_map = json.load(json_file)
         data = data.rename(column_name_map, axis='columns')
 
-    # trim rows
-    if len(data.index) > 5000:
-        data = data.tail(5000)
-
     # transform column values
     try:
         vals_dict = get_values_dict(year)

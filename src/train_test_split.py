@@ -31,8 +31,29 @@ print(f'y_train size: {y_train.index.size}')
 print(f'x_test size: {x_test.index.size}')
 print(f'y_test size: {y_test.index.size}')
 
-x_train.to_csv(f'./compiled_data/train/x.csv', index=False)
-x_test.to_csv(f'./compiled_data/test/x.csv', index=False)
+## fill nan in x_train data
+print('\n')
+print('\nFill nan in x_train data')
+print('x_train size pre imputation: ', x_train.index.size)
+x_train_imputed = x_train.apply(lambda x: x.fillna(x.value_counts().index[0]))
+x_train = x_train.dropna()
+x_train_imputed = x_train_imputed.dropna()
+print('x_train size post-imputation dropped na: ', x_train_imputed.index.size)
+print('x_train size dropped na: ', x_train.index.size)
+
+## fill nan in x_test data
+print('\n')
+print('\nFill nan in x_test data')
+print('x_test size pre imputation: ', x_test.index.size)
+x_test_imputed = x_test.apply(lambda x: x.fillna(x.value_counts().index[0]))
+x_test = x_test.dropna()
+x_test_imputed = x_test_imputed.dropna()
+print('x_test size post-imputation dropped na: ', x_test_imputed.index.size)
+print('x_test size dropped na: ', x_test.index.size)
+#%%
+
+x_train_imputed.to_csv(f'./compiled_data/train/x.csv', index=False)
+x_test_imputed.to_csv(f'./compiled_data/test/x.csv', index=False)
 y_train.to_csv(f'./compiled_data/train/y.csv', index=False)
 y_test.to_csv(f'./compiled_data/test/y.csv', index=False)
 #%%
