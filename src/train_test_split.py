@@ -21,7 +21,7 @@ hrs_wrkd_y = data['weekly_hrs_worked']
 x_train, x_test, y_train, y_test = train_test_split(
     hrs_wrkd_x,
     hrs_wrkd_y,
-    test_size=0.3,
+    test_size=0.5,
     stratify=hrs_wrkd_y,
     random_state=42)
 

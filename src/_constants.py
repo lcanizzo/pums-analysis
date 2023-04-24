@@ -18,7 +18,7 @@ TYPES = ['p']
 COMBINATIONS = np.array(np.meshgrid(RECENT_YEARS,STATES,TYPES)).T.reshape(-1,3)
 
 # if defined pulls tail = length from each survey, else uses complete dataset.
-MAX_LENGTH = 1000
+MAX_LENGTH = 50
 
 if __name__ == '__main__':
     print('combinations:')
