@@ -140,29 +140,13 @@ def create_transform_output(combination):
         subset=['AvgHoursWorkedPerWeek'],
         inplace=True)
 
-    # bin hours worked per week
-    hr_bins = np.arange(0, 101, 10)
-    hr_labels = [
-        '0-9',
-        '10-19',
-        '20-29',
-        '30-39',
-        '40-49',
-        '50-59',
-        '60-69',
-        '70-79',
-        '80-89',
-        '90-100+']
-    
-    data['weekly_hrs_worked'] = pd.Categorical(
-        pd.cut(
-            data['AvgHoursWorkedPerWeek'],
-            bins=hr_bins,
-            labels=hr_labels,
-            include_lowest=True
-        ),
-        categories=hr_labels,
-        ordered=True)
+    # label works over 40 hrs a week
+    data['works_over_40_hrs'] = np.where(
+        data['AvgHoursWorkedPerWeek'] < 40,
+        0,
+        1
+    )
+    data.drop(['AvgHoursWorkedPerWeek'], axis=1, inplace=True)
     
     # set negative income to zero
     data['UnadjustedTotalPersonIncome'] = np.where(

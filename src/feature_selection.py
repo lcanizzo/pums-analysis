@@ -24,7 +24,8 @@ def get_continuous_cols(df):
    """
    categorical_columns = get_categorical_cols(df)
    columns = df.columns
-   return [col for col in columns if col not in categorical_columns]
+   #todo: re-assess how to exclude binary categorical class
+   return [col for col in columns if col not in categorical_columns and col != 'works_over_40_hrs']
 
 def encode_features_categorical(df):
     """
@@ -103,9 +104,10 @@ def get_selected_features(x_train, y_train):
     if __name__ == "__main__":
         print('\n')
         print('\nContinous variable correlation coefficients to AvgHoursWorkedPerWeek:')
-        sns.heatmap(cont_corr, vmin=-1, vmax=1, annot=True)
-        plt.title('Continuous data correlation', pad=12)
-        plt.show()
+        print(cont_corr)
+        # sns.heatmap(cont_corr, vmin=-1, vmax=1, annot=True)
+        # plt.title('Continuous data correlation', pad=12)
+        # plt.show()
 
     ranked_cont_corr = cont_corr['AvgHoursWorkedPerWeek'].abs().sort_values(ascending=False)
     ranked_cont_corr.drop('AvgHoursWorkedPerWeek', inplace=True)

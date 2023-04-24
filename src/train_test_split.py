@@ -9,14 +9,9 @@ data = pd.read_csv(os.path.join(staged, "all.csv"))
 data.reset_index()
 print('data size: ', data.index.size)
 
-## plot binned hours worked data
-plt.hist(data['weekly_hrs_worked'].sort_values(), bins=10)
-plt.title('Average hours worked per week')
-plt.show()
-
 ## train test split
-hrs_wrkd_x = data.drop(['AvgHoursWorkedPerWeek', 'weekly_hrs_worked'], axis=1)
-hrs_wrkd_y = data['weekly_hrs_worked']
+hrs_wrkd_x = data.drop(['works_over_40_hrs'], axis=1)
+hrs_wrkd_y = data['works_over_40_hrs']
 
 x_train, x_test, y_train, y_test = train_test_split(
     hrs_wrkd_x,
