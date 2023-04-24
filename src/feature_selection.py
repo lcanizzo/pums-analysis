@@ -1,8 +1,11 @@
 """
-Run feature evaluation on categorical features, and correlation analysis on nontinuous features
+Run feature evaluation on categorical features, and correlation analysis on
+continuous features. Identified features are selected and binned to return
+only categorical data.
 """
 #%%
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
@@ -13,7 +16,7 @@ def get_categorical_cols(df):
    """
    Given a dataframe, returns a list of columns that are categorical.
    """
-   return df.select_dtypes('object').columns
+   return df.select_dtypes(['object','category']).columns
 
 def get_continuous_cols(df):
    """
@@ -135,8 +138,8 @@ if __name__ == "__main__":
 
     selected_features = get_selected_features(x_train, y_train)
 
-    x_train_selected = x_train[selected_features]
-    x_test_selected = x_test[selected_features]
+    x_train_selected = x_train.copy()[selected_features]
+    x_test_selected = x_test.copy()[selected_features]
 
     print('\n')
     print('\nx_train size: ', x_train.index.size)
@@ -147,6 +150,13 @@ if __name__ == "__main__":
     print('\nx_train_selected columns:')
     print(x_train_selected.columns)
 
+    # raise exception if continuous selected features have not been binned above
+    selected_continuous = get_continuous_cols(x_train_selected)
+    if (len(selected_continuous) > 0):
+        raise Exception(f'Continuous columns have not been binned \
+in selected data.\n{selected_continuous}')
+
+    # store test/train features
     x_train_selected.to_csv(f'{train_path}/x.csv', index=False)
     x_test_selected.to_csv(f'{test_path}/x.csv', index=False)
 

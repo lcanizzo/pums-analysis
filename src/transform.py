@@ -163,6 +163,38 @@ def create_transform_output(combination):
         ),
         categories=hr_labels,
         ordered=True)
+    
+    # set negative income to zero
+    data['UnadjustedTotalPersonIncome'] = np.where(
+        data['UnadjustedTotalPersonIncome'] < 0, 
+        0, 
+        data['UnadjustedTotalPersonIncome'])
+    
+    # bin income
+    income_bins = np.linspace(0, 185000, 15).round()
+    income_labels = []
+
+    for i in range(0, len(income_bins) - 1):
+        start = f'{int(income_bins[i]):,}'
+        end = None
+        if i < len(income_bins) - 1:
+            end = f'{int(income_bins[i+1]):,}'
+        if i == len(income_bins) - 2:
+            end = end + '+'
+        income_labels.append(f'{start}-{end}')
+
+    data['personal_income'] = pd.Categorical(
+         pd.cut(
+            data['UnadjustedTotalPersonIncome'],
+            bins=income_bins,
+            labels=income_labels,
+            include_lowest=True
+        ),
+        categories=income_labels,
+        ordered=True
+    )
+
+    data.drop('UnadjustedTotalPersonIncome', axis=1, inplace=True)
 
     # write to compiled_data/staged directors
     data.to_csv(f'./compiled_data/staged/{year}_{survey_type}_{state}.csv', index=False)
