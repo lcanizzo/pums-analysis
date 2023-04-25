@@ -11,8 +11,8 @@ def main():
     print('data size: ', data.index.size)
 
     ## train test split
-    hrs_wrkd_x = data.drop(['works_over_40_hrs'], axis=1)
-    hrs_wrkd_y = data['works_over_40_hrs']
+    hrs_wrkd_x = data.drop(['income_under_20k'], axis=1)
+    hrs_wrkd_y = data['income_under_20k']
 
     x_train, x_test, y_train, y_test = train_test_split(
         hrs_wrkd_x,

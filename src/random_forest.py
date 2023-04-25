@@ -40,7 +40,7 @@ if __name__ == "__main__":
         RDF classifier.
         """
         ## Test Random Forest hyper-parameters
-        test_hyper_params = False
+        test_hyper_params = input('Test hyper-parameters? (y/n): ').lower().strip() == 'y'
 
         # If depth and n subtrees need to be tested, run evaluations
         if test_hyper_params:
@@ -102,9 +102,9 @@ if __name__ == "__main__":
         # Else run single optimized model
         else:
             ## If tuning threshold
-            threshold = 0.8
+            threshold = 0.5
             print('\nThe most performant set of hyper-params for Random Forest are:')
-            n = 24
+            n = 19
             d = 15
             print(f'n = {n}')
             print(f'd = {d}')
