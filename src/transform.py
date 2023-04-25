@@ -211,6 +211,8 @@ if __name__ == "__main__":
         for file in files:
             os.remove(file)
 
+        print('\n')
+        print('\nStaged data size: ', data.index.size)
         data.to_csv(f'./compiled_data/staged/all.csv', index=False)
 
     time_execution(process)

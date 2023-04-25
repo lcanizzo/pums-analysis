@@ -60,3 +60,14 @@ and from an application point of view"
 - https://medium.com/analytics-vidhya/the-ultimate-guide-for-clustering-mixed-data-1eefa0b4743b
 - gower distance:
     - https://pypi.org/project/gower/
+
+---
+
+## Multi-core machine learning Python
+- https://machinelearningmastery.com/multi-core-machine-learning-in-python/
+    - In a pool you can't use multiple cores, but for runs of your synchronous train and eval models it can be used
+
+---
+
+## Catesian Product
+- https://docs.python.org/3/library/itertools.html#itertools.combinations
