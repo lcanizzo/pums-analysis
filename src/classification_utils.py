@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from feature_selection import get_continuous_cols, \
-    encode_features_categorical, encode_class
+    encode_features_categorical
 
 def get_data():
     x_train = pd.read_csv('./compiled_data/train/x.csv')
@@ -25,8 +25,6 @@ def get_data_encoded():
     continuous_features = get_continuous_cols(x_train)
     x_train_enc = encode_features_categorical(x_train)
     x_test_enc = encode_features_categorical(x_test)
-    y_train_enc = encode_class(y_train)
-    y_test_enc = encode_class(y_test)
 
     for col in continuous_features:
         x_train_enc[col] = x_train[col]
@@ -42,7 +40,7 @@ def get_data_encoded():
         print('\nx_train_encoded size: ')
         print(x_train_enc.index.size)
 
-    return x_train_enc, x_test_enc, y_train_enc, y_test_enc
+    return x_train_enc, x_test_enc, y_train, y_test
 
 def print_accuracy(y_pred, y_test):
     accuracy = round(accuracy_score(y_test, y_pred), 3)

@@ -37,6 +37,10 @@ def main():
     print('x_train size post-imputation dropped na: ', x_train_imputed.index.size)
     print('x_train size dropped na: ', x_train.index.size)
 
+    # Value count example:
+    # print(x_train['OccupationRecode'].value_counts())
+
+
     ## fill nan in x_test data
     print('\n')
     print('\nFill nan in x_test data')

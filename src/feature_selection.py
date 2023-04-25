@@ -9,8 +9,11 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+
+bool_cols = ['income_under_20k']
 
 def get_categorical_cols(df):
    """
@@ -22,10 +25,12 @@ def get_continuous_cols(df):
    """
    Given a dataframe, returns a list of columns that are continuous.
    """
-   categorical_columns = get_categorical_cols(df)
+   bool_cols = ['income_under_20k']
+   cat_cols = get_categorical_cols(df)
    columns = df.columns
-   #todo: re-assess how to exclude binary categorical class
-   return [col for col in columns if col not in categorical_columns and col != 'income_under_20k']
+   return [
+       col for col in columns if col not in cat_cols and col not in bool_cols
+    ]
 
 def encode_features_categorical(df):
     """
@@ -40,15 +45,6 @@ def encode_features_categorical(df):
     
     return df_encoded
  
-def encode_class(df):
-    """
-    Encodes class variable.
-    """
-    le = LabelEncoder()
-    le.fit(df.values.ravel())
-    df_encoded = le.transform(df.values.ravel())
-    return df_encoded
- 
 def chi2_selection_all(x_train, y_train):
     fs = SelectKBest(score_func=chi2, k='all')
     fs.fit(x_train, y_train.ravel())
@@ -59,8 +55,7 @@ def get_selected_features(x_train, y_train):
     # Chi2 Categorical analysis
     cat_cols = get_categorical_cols(x_train)
     x_train_enc = encode_features_categorical(x_train)
-    y_train_enc = encode_class(y_train)
-    fs = chi2_selection_all(x_train_enc, y_train_enc)
+    fs = chi2_selection_all(x_train_enc, y_train)
 
     # Sort categorical feature scores
     selected_categorical = []
@@ -70,7 +65,7 @@ def get_selected_features(x_train, y_train):
     selected_categorical.sort(key=lambda x: x['score'], reverse=True)
 
     # Ranking categorical features
-    n = 15
+    n = 10
 
     # Top categorical features
     top_n_categorical = selected_categorical[:n+1]

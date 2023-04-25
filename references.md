@@ -50,6 +50,9 @@ and from an application point of view"
 - https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html#sphx-glr-auto-examples-compose-plot-column-transformer-mixed-types-py
 - https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder
 - https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html#sklearn.preprocessing.OrdinalEncoder
+- Python Data Science Handbook (see notes)
+- LabelEncoder V. OneHotEncoder:
+    - https://towardsdatascience.com/choosing-the-right-encoding-method-label-vs-onehot-encoder-a4434493149b
 
 ## Continuous data correlation
 - https://www.andrews.edu/~calkins/math/edrm611/edrm05.htm 

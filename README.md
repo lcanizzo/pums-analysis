@@ -14,6 +14,7 @@ Dictonary files included a reduced human-readable set of columns.
 ### 2) Feature Selection
 - [__`python`__ `feature_selection.py`] Runs chi-square analysis to help identify relevant features.
 ### 3) Classification Models
+- [__`python`__ `logistic_regression.py`] Executes a logit classification of test data.
 - [__`python`__ `bayes.py`] Executes a naive Bayesian classification of test data.
 - [__`python`__ `decision_tree.py`] Executes a decision tree classification of test data.
 - [__`python`__ `random_forest.py`] Executes a random foreset classification of test data.
