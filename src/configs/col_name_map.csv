@@ -48,7 +48,6 @@
 334,OCCP,OccupationRecode
 335,PAOC,PresenceAndAgeOfChildren
 337,PINCP,UnadjustedTotalPersonIncome
-339,POVPIP,IncomeToPovertyRatioRecode
 341,POWSP,PlaceOfWorkStateOrForeignRecode
 342,PRIVCOV,PrivateHealthInsuranceCoverageRecode
 343,PUBCOV,PublicHealthCoverageRecode

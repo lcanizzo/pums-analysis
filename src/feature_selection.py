@@ -25,7 +25,7 @@ def get_continuous_cols(df):
    categorical_columns = get_categorical_cols(df)
    columns = df.columns
    #todo: re-assess how to exclude binary categorical class
-   return [col for col in columns if col not in categorical_columns and col != 'works_over_40_hrs']
+   return [col for col in columns if col not in categorical_columns and col != 'income_under_20k']
 
 def encode_features_categorical(df):
     """
@@ -70,7 +70,7 @@ def get_selected_features(x_train, y_train):
     selected_categorical.sort(key=lambda x: x['score'], reverse=True)
 
     # Ranking categorical features
-    n = 10
+    n = 15
 
     # Top categorical features
     top_n_categorical = selected_categorical[:n+1]
@@ -103,17 +103,17 @@ def get_selected_features(x_train, y_train):
     
     if __name__ == "__main__":
         print('\n')
-        print('\nContinous variable correlation coefficients to AvgHoursWorkedPerWeek:')
+        print('\nContinous variable correlation coefficients to UnadjustedTotalPersonIncome:')
         print(cont_corr)
-        # sns.heatmap(cont_corr, vmin=-1, vmax=1, annot=True)
-        # plt.title('Continuous data correlation', pad=12)
-        # plt.show()
+        sns.heatmap(cont_corr, vmin=-1, vmax=1, annot=True)
+        plt.title('Continuous data correlation', pad=12)
+        plt.show()
 
-    ranked_cont_corr = cont_corr['AvgHoursWorkedPerWeek'].abs().sort_values(ascending=False)
-    ranked_cont_corr.drop('AvgHoursWorkedPerWeek', inplace=True)
+    ranked_cont_corr = cont_corr['UnadjustedTotalPersonIncome'].abs().sort_values(ascending=False)
+    ranked_cont_corr.drop('UnadjustedTotalPersonIncome', inplace=True)
 
     if __name__ == "__main__":
-        print('\nAverage hours worked per week continuous correlations (ranked):')
+        print('\nUnadjustedTotalPersonIncome continuous correlations (ranked):')
     
     for i in range(0, len(ranked_cont_corr)):
         if ranked_cont_corr.iloc[i] >= 0.3:
@@ -129,42 +129,34 @@ def get_selected_features(x_train, y_train):
     
     return selected_features
 
+
 if __name__ == "__main__":
-    train_path = './compiled_data/train'
-    test_path = './compiled_data/test'
-    # Load test and train
-    x_train = pd.read_csv(f'{train_path}/x.csv')
-    x_test = pd.read_csv(f'{test_path}/x.csv')
-    y_train = pd.read_csv(f'{train_path}/y.csv')
-    y_test = pd.read_csv(f'{test_path}/y.csv')
+    from process_timer import time_execution
+    from classification_utils import get_data
 
-    selected_features = get_selected_features(x_train, y_train)
+    def main():
+        train_path = './compiled_data/train'
+        test_path = './compiled_data/test'
+        # Load test and train
+        x_train, x_test, y_train, y_test = get_data()
+        selected_features = get_selected_features(x_train, y_train)
 
-    x_train_selected = x_train.copy()[selected_features]
-    x_test_selected = x_test.copy()[selected_features]
+        x_train_selected = x_train.copy()[selected_features]
+        x_test_selected = x_test.copy()[selected_features]
 
-    print('\n')
-    print('\nx_train size: ', x_train.index.size)
-    print('\nx_train columns:')
-    print(x_train.columns)
+        print('\n')
+        print('\nx_train size: ', x_train.index.size)
+        print('\nx_train columns:')
+        print(x_train.columns)
 
-    print('\nx_train_selected size: ', x_train_selected.index.size)
-    print('\nx_train_selected columns:')
-    print(x_train_selected.columns)
+        print('\nx_train_selected size: ', x_train_selected.index.size)
+        print('\nx_train_selected columns:')
+        print(x_train_selected.columns)
 
-    # raise exception if continuous selected features have not been binned above
-    selected_continuous = get_continuous_cols(x_train_selected)
-    if (len(selected_continuous) > 0):
-        raise Exception(f'Continuous columns have not been binned \
-in selected data.\n{selected_continuous}')
+        # store test/train features
+        x_train_selected.to_csv(f'{train_path}/x.csv', index=False)
+        x_test_selected.to_csv(f'{test_path}/x.csv', index=False)
 
-    # store test/train features
-    x_train_selected.to_csv(f'{train_path}/x.csv', index=False)
-    x_test_selected.to_csv(f'{test_path}/x.csv', index=False)
-
-    # Note: Ordinal selected features:
-    # ordinal_selected = ['TimeOfArrivalAtWork', 'TimeOfDepartureForWork', 'GradeLevelAttending']
-    # ordinal_dict_col = ['JWAP', 'JWDP', 'SCHG']
-
-
+    time_execution(main)    
+    
 #%%
