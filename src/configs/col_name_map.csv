@@ -42,7 +42,6 @@
 324,JWAP,TimeOfArrivalAtWork
 325,JWDP,TimeOfDepartureForWork
 326,LANP,LanguageSpokenAtHome
-330,NAICSP,IndustryClassificationRecode
 331,NATIVITY,Nativity
 333,OC,OwnChild
 334,OCCP,OccupationRecode
@@ -51,6 +50,5 @@
 341,POWSP,PlaceOfWorkStateOrForeignRecode
 342,PRIVCOV,PrivateHealthInsuranceCoverageRecode
 343,PUBCOV,PublicHealthCoverageRecode
-361,SOCP,StandardOccupationalClassification
 2019_272,JWTRNS,TransportationToWork
 2019_298,RELSHIPP,Relationship

@@ -104,7 +104,7 @@ if __name__ == "__main__":
             ## If tuning threshold
             threshold = 0.5
             print('\nThe most performant set of hyper-params for Random Forest are:')
-            n = 19
+            n = 20
             d = 15
             print(f'n = {n}')
             print(f'd = {d}')
@@ -120,7 +120,7 @@ if __name__ == "__main__":
             probabilities = rndf.predict_proba(x_test)
             y_pred = (probabilities [:,1] >= threshold).astype('int')
             print_accuracy(y_pred, y_test)
-            print_confusion_matrix(y_pred, y_test)
+            print_confusion_matrix(y_pred, y_test, 'Random Forest')
             print(f'threshold: {threshold}')
 
     time_execution(main)

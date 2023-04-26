@@ -9,7 +9,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OrdinalEncoder
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 
@@ -32,30 +32,40 @@ def get_continuous_cols(df):
        col for col in columns if col not in cat_cols and col not in bool_cols
     ]
 
-def encode_features_categorical(df):
+def encode_categorical_numeric(df):
     """
     Encodes categorical variables and drops continuous variables.
     """
-    le = LabelEncoder()
+    enc = LabelEncoder()
     df_encoded = pd.DataFrame()
     categorical_columns = get_categorical_cols(df)
 
     for feature in categorical_columns:
-        df_encoded[feature] = le.fit_transform(df[feature])
+        df_encoded[feature] = enc.fit_transform(df[feature])
     
     return df_encoded
  
+def encode_class(df):
+    """
+    Encodes class variable.
+    """
+    le = LabelEncoder()
+    le.fit(df.values.ravel())
+    df_encoded = le.transform(df.values.ravel())
+    return df_encoded
+
 def chi2_selection_all(x_train, y_train):
     fs = SelectKBest(score_func=chi2, k='all')
-    fs.fit(x_train, y_train.ravel())
+    fs.fit(x_train, y_train)
     return fs
 
 def get_selected_features(x_train, y_train):
     selected_features = []
     # Chi2 Categorical analysis
     cat_cols = get_categorical_cols(x_train)
-    x_train_enc = encode_features_categorical(x_train)
-    fs = chi2_selection_all(x_train_enc, y_train)
+    x_train_enc = encode_categorical_numeric(x_train)
+    y_train_enc = encode_class(y_train)
+    fs = chi2_selection_all(x_train_enc, y_train_enc)
 
     # Sort categorical feature scores
     selected_categorical = []
@@ -68,7 +78,7 @@ def get_selected_features(x_train, y_train):
     n = 10
 
     # Top categorical features
-    top_n_categorical = selected_categorical[:n+1]
+    top_n_categorical = selected_categorical[:n]
 
     if __name__ == "__main__":
         print('\n')
@@ -81,7 +91,7 @@ def get_selected_features(x_train, y_train):
             print(f'{i+1}). {obj["column"]}: {obj["score"]}')
 
     # Bottom categorical features
-    bottom_n_categorical = list(reversed(selected_categorical))[:n+1]
+    bottom_n_categorical = list(reversed(selected_categorical))[:n]
     
     if __name__ == "__main__":
         print('\n')
