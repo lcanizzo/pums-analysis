@@ -147,9 +147,9 @@ def create_transform_output(combination):
         data['UnadjustedTotalPersonIncome']
     )
     
-    # label makes under 20k a year
-    data['income_under_20k'] = np.where(
-        data['UnadjustedTotalPersonIncome'] < 20000,
+    # label binary
+    data['income_over_40k'] = np.where(
+        data['UnadjustedTotalPersonIncome'] > 40000,
         1,
         0
     )
@@ -181,7 +181,8 @@ def create_transform_output(combination):
         ordered=True
     )
 
-    data.drop('AvgHoursWorkedPerWeek', axis=1, inplace=True)
+    # drop binned column
+    data.drop(['AvgHoursWorkedPerWeek'], axis=1, inplace=True)
 
     # write to compiled_data/staged directors
     data.to_csv(f'./compiled_data/staged/{year}_{survey_type}_{state}.csv', index=False)
@@ -216,7 +217,10 @@ if __name__ == "__main__":
 
         print('\n')
         print('\nStaged data size: ', data.index.size)
-        data.to_csv(f'./compiled_data/staged/all.csv', index=False)
+        data.to_csv(f'./compiled_data/staged/all_class_value.csv', index=False)
+        # Drop class value for classification testing
+        data.drop(['UnadjustedTotalPersonIncome'], axis=1, inplace=True)
+        data.to_csv(f'./compiled_data/staged/all_transformed.csv', index=False)
 
     time_execution(process)
 

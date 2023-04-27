@@ -1,6 +1,5 @@
 """
 Prepares PUMS Data-Dict CVS for use as panda data frames.
-todo: review function comments for accuracy
 """
 # %%
 import pandas as pd
@@ -172,7 +171,7 @@ def split_original_dictionary(year):
 
 def rename_dict_cols(dict_path):
     """
-    For recent years, transforms split CSVs to reference SQL column names.
+    For recent years, transforms split CSVs to reference column names.
     """
     data_dict = pd.read_csv(dict_path)
     name_map = {}

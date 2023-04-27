@@ -1,3 +1,8 @@
+"""
+Runs random forest tree classification with and testing of hyper-params to
+classify test data on whether persons make more than 40k a year.
+"""
+
 #%%
 import matplotlib.pyplot as plt
 import numpy as np
@@ -40,19 +45,18 @@ COLORS = [
 np.random.seed(0)
 
 # Train test split
-df = pd.read_csv('./compiled_data/staged/all.csv')
+df = pd.read_csv('./compiled_data/staged/all_transformed.csv')
 
-features_x = df.drop(['income_under_20k'], axis=1)
-class_y = df['income_under_20k']
+features_x = df.drop(['income_over_40k'], axis=1)
+class_y = df['income_over_40k']
 x_train, x_test, y_train, y_test = train_test_split(
     features_x,
     class_y,
-    test_size=0.2,
+    test_size=0.3,
     random_state=0
 )
 
 # Prepare imputer, scaler / encoder, and categorical feature selection
-numeric_features = get_continuous_cols(df)
 numeric_transformer = Pipeline(
     steps=[
         ("imputer", SimpleImputer(strategy="median")),
@@ -60,7 +64,6 @@ numeric_transformer = Pipeline(
     ]
 )
 
-categorical_features = get_categorical_cols(df)
 categorical_transformer = Pipeline(
     steps=[
         ("imputer", SimpleImputer(strategy="most_frequent")),
@@ -71,8 +74,8 @@ categorical_transformer = Pipeline(
 
 preprocessor = ColumnTransformer(
     transformers=[
-        ("num", numeric_transformer, numeric_features),
-        ("cat", categorical_transformer, categorical_features),
+        ("num", numeric_transformer, get_continuous_cols(df)),
+        ("cat", categorical_transformer, get_categorical_cols(df)),
     ],
     sparse_threshold=0
 )
@@ -105,7 +108,7 @@ if __name__ == '__main__':
     def main():
         ## Test Random Forest hyper-parameters
         test_hyper_params = input(
-            'Run defined model (1) or test hyper-params (0)'
+            'Run defined model (1) or test hyper-params (0): '
         ).lower().strip() == '0'
 
         # If depth and n subtrees need to be tested, run evaluations
