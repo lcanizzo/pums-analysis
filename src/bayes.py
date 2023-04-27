@@ -13,7 +13,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectPercentile, chi2
-from classification_utils import print_accuracy, print_confusion_matrix, \
+from classification_utils import print_metrics, \
 get_categorical_cols, get_continuous_cols
 from process_timer import time_execution
 
@@ -62,12 +62,10 @@ def main():
             ("classifier", GaussianNB())
         ]
     )
+    
+    y_pred = gaussian.fit(X_train, y_train).predict(X_test)
 
-    gaussian.fit(X_train, y_train)
-    y_pred = gaussian.predict(X_test)
-
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Gaussian Naive Bayes")
+    print_metrics(y_pred, y_test, "Gaussian Naive Bayes")
 
     # Multinomial Naive Bayes
     multinomial = Pipeline(
@@ -79,8 +77,7 @@ def main():
 
     y_pred = multinomial.fit(X_train, y_train).predict(X_test)
 
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Multinomial Naive Bayes")
+    print_metrics(y_pred, y_test, "Multinomial Naive Bayes")
 
     # Bernoulli Naive Bayes
     bernoulli = Pipeline(
@@ -92,8 +89,7 @@ def main():
 
     y_pred = bernoulli.fit(X_train, y_train).predict(X_test)
 
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Bernoulli Naive Bayes")
+    print_metrics(y_pred, y_test, "Bernoulli Naive Bayes")
 
 if __name__ == '__main__':
     time_execution(main)

@@ -18,7 +18,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectPercentile, chi2
-from classification_utils import print_accuracy, print_confusion_matrix, \
+from classification_utils import print_metrics, \
 get_categorical_cols, get_continuous_cols
 from process_timer import time_execution
 
@@ -178,8 +178,7 @@ if __name__ == '__main__':
             rndf.fit(x_train, y_train)
             probabilities = rndf.predict_proba(x_test)
             y_pred = (probabilities [:,1] >= threshold).astype('int')
-            print_accuracy(y_pred, y_test)
-            print_confusion_matrix(y_pred, y_test, 'Random Forest')
+            print_metrics(y_pred, y_test, 'Random Forest')
             print(f'threshold: {threshold}')
 
     time_execution(main)

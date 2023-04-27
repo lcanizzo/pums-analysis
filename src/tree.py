@@ -14,7 +14,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectPercentile, chi2
-from classification_utils import print_accuracy, print_confusion_matrix, \
+from classification_utils import print_metrics, \
 get_categorical_cols, get_continuous_cols
 from process_timer import time_execution
 
@@ -67,12 +67,7 @@ def main():
 
     y_pred = tree.fit(X_train, y_train).predict(X_test)
 
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Decision Tree")
-
-    print('\nTree:')
-    text_representation = export_text(tree['classifier'])
-    print(text_representation)
+    print_metrics(y_pred, y_test, "Decision Tree")
 
 if __name__ == '__main__':
     time_execution(main)

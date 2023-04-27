@@ -30,8 +30,6 @@ def print_accuracy(y_pred, y_test):
     """
     Prints accuracy score.
     """
-    accuracy = round(accuracy_score(y_test, y_pred), 3)
-    print('\nPrediction accuracy: ', accuracy)
 
 def print_confusion_matrix(y_pred, y_test, model_name=''):
     """
@@ -45,8 +43,46 @@ def print_confusion_matrix(y_pred, y_test, model_name=''):
     print(f'FN: {fn}')
     print(f'TPR: {round(tp / (tp + fn),5)}')
     print(f'TNR: {round(tn / (tn + fp),5)}')
+    print('\n')
+    precision = round(tp / (tp + fp), 5)
+    recall = round(tp / (tp + fn),5)
+    f1 = round(2 * ((precision * recall)/(precision + recall)), 5)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'f1: {f1}')
+    print('\n')
     ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
     plt.title(f'{model_name} Confusion Matrix')
     plt.show()
 
+def print_metrics(y_pred, y_test, model_name=''):
+    """
+    Prints: accuracy, confusion matrix, precision, recall, and f1 scores.
+    """
+    # Print accuracy
+    accuracy = round(accuracy_score(y_test, y_pred), 3)
+    print('\nPrediction accuracy: ', accuracy)
+
+    # Print confusion matrix, TPR (Recall), TNR, Precision, and f1.
+    [[tp, fn], [fp, tn]] = \
+        confusion_matrix(y_test, y_pred)
+    print(f'TP: {tp}')
+    print(f'FP: {fp}')
+    print(f'TN: {tn}')
+    print(f'FN: {fn}')
+    print(f'TPR: {round(tp / (tp + fn),5)}')
+    print(f'TNR: {round(tn / (tn + fp),5)}')
+    print('\n')
+    precision = round(tp / (tp + fp), 5)
+    recall = round(tp / (tp + fn),5)
+    f1 = round(2 * ((precision * recall)/(precision + recall)), 5)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'f1: {f1}')
+    print('\n')
+
+    # Plot confusion matrix
+    ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
+    plt.title(f'{model_name} Confusion Matrix')
+    plt.show()
 #%%
