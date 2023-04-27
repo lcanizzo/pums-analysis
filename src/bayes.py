@@ -1,6 +1,6 @@
 """
 Runs a range of Bayesian classification models with the newton-cholesky solver
-to classify test data on whether persons make more than 50k a year.
+to classify test data on whether persons make more than 40k a year.
 """
 
 #%%
@@ -23,8 +23,8 @@ def main():
     # Train test split
     df = pd.read_csv('./compiled_data/staged/all_transformed.csv')
     
-    features_x = df.drop(['income_over_50k'], axis=1)
-    class_y = df['income_over_50k']
+    features_x = df.drop(['income_over_40k'], axis=1)
+    class_y = df['income_over_40k']
     X_train, X_test, y_train, y_test = train_test_split(
         features_x,
         class_y,

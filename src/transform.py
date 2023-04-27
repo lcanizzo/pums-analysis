@@ -148,8 +148,8 @@ def create_transform_output(combination):
     )
     
     # label binary
-    data['income_over_50k'] = np.where(
-        data['UnadjustedTotalPersonIncome'] > 50000,
+    data['income_over_40k'] = np.where(
+        data['UnadjustedTotalPersonIncome'] > 40000,
         1,
         0
     )

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-bool_cols = ['income_over_50k']
+bool_cols = ['income_over_40k']
 
 def get_categorical_cols(df):
    """
@@ -19,7 +19,7 @@ def get_continuous_cols(df):
    """
    Given a dataframe, returns a list of columns that are continuous.
    """
-   bool_cols = ['income_over_50k']
+   bool_cols = ['income_over_40k']
    cat_cols = get_categorical_cols(df)
    columns = df.columns
    return [
