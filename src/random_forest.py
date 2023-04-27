@@ -1,46 +1,112 @@
-"""
-Tests random forest classification on data.
-"""
 #%%
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
 from itertools import product
 from multiprocessing import Pool
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from classification_utils import get_data_encoded, print_accuracy, \
-    print_confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import SelectPercentile, chi2
+from classification_utils import print_accuracy, print_confusion_matrix, \
+get_categorical_cols, get_continuous_cols
+from process_timer import time_execution
 
-RANDOM_STATE = 43
 CORES = os.cpu_count()
+RANDOM_STATE = 43
+COLORS = [
+    'red',
+    'blue',
+    'green',
+    'orange',
+    'purple',
+    'lightcoral',
+    'cornflowerblue',
+    'springgreen',
+    'peru',
+    'fuchsia',
+    'maroon',
+    'slategrey',
+    'yellowgreen',
+    'sienna',
+    'plum'   
+]
 
-x_train, x_test, y_train, y_test = get_data_encoded()
+np.random.seed(0)
+
+# Train test split
+df = pd.read_csv('./compiled_data/staged/all.csv')
+
+features_x = df.drop(['income_under_20k'], axis=1)
+class_y = df['income_under_20k']
+x_train, x_test, y_train, y_test = train_test_split(
+    features_x,
+    class_y,
+    test_size=0.2,
+    random_state=0
+)
+
+# Prepare imputer, scaler / encoder, and categorical feature selection
+numeric_features = get_continuous_cols(df)
+numeric_transformer = Pipeline(
+    steps=[
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler())
+    ]
+)
+
+categorical_features = get_categorical_cols(df)
+categorical_transformer = Pipeline(
+    steps=[
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("encoder", OneHotEncoder(handle_unknown="ignore")),
+        ("selector", SelectPercentile(chi2, percentile=25)),
+    ]
+)
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", numeric_transformer, numeric_features),
+        ("cat", categorical_transformer, categorical_features),
+    ],
+    sparse_threshold=0
+)
+
 
 def test_params(params):
+    """
+    Runs random forest classifier on data and returns
+    params n, d, and the error for the run.
+    """
     n, d = params
     print(f'\ntest_rndf_params: n="{n}"; d="{d}"' )
-    rndf = RandomForestClassifier(
-        max_depth=d,
-        n_estimators=n,
-        criterion='entropy',
-        random_state=RANDOM_STATE)
+    rndf = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor), 
+            ("classifier", RandomForestClassifier(
+                max_depth=d,
+                n_estimators=n,
+                criterion='entropy',
+                random_state=RANDOM_STATE
+            ))
+        ]
+    )
     rndf_y_pred = rndf.fit(x_train, y_train).predict(x_test)
     rndf_acc = round(accuracy_score(y_test, rndf_y_pred), 4)
     rndf_err = round(1 - rndf_acc, 4)
     return [n, d, rndf_err]
 
-if __name__ == "__main__":
-    from process_timer import time_execution
-
+if __name__ == '__main__':
     def main():
-        """
-        Uses multiple runs adjusting n & d to determine optimal params for 
-        RDF classifier.
-        """
         ## Test Random Forest hyper-parameters
-        test_hyper_params = input('Test hyper-parameters? (y/n): ').lower().strip() == 'y'
+        test_hyper_params = input(
+            'Run defined model (1) or test hyper-params (0)'
+        ).lower().strip() == '0'
 
         # If depth and n subtrees need to be tested, run evaluations
         if test_hyper_params:
@@ -61,29 +127,9 @@ if __name__ == "__main__":
                 results = pool.map(test_params, hyper_params)
                 err_rates = pd.DataFrame(results, columns =['n', 'd', 'err'])
 
-            # print('\n')
-            # print('\nBest Random Forest hyper-parameters')
             print('\nError rates dataframe:')
             err_rates.sort_values(by=['d'], inplace=True)
             print(err_rates)
-
-            colors = [
-                'red',
-                'blue',
-                'green',
-                'orange',
-                'purple',
-                'lightcoral',
-                'cornflowerblue',
-                'springgreen',
-                'peru',
-                'fuchsia',
-                'maroon',
-                'slategrey',
-                'yellowgreen',
-                'sienna',
-                'plum'   
-            ]
 
             ax = plt.axes()
             ax.set_xticks(subtrees)
@@ -91,30 +137,40 @@ if __name__ == "__main__":
                 plt.plot(
                     subtrees,
                     err_rates[err_rates['d'] == d]['err'],
-                    color=colors[i],
+                    color=COLORS[i],
                     label=f'd = {d}'
                 )
             plt.xlabel('n subtrees')
             plt.ylabel('Error Rate')
             plt.title('Random Forest hyper-parameter performance')
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+            plt.legend(
+                bbox_to_anchor=(1.05, 1),
+                loc='upper left',
+                borderaxespad=0.
+            )
             plt.show()
-        # Else run single optimized model
+        # Run single optimized model if not testing hyper-params
         else:
             ## If tuning threshold
+            print(
+                '\nThe most performant hyper-params for Random Forest are:'
+            )
             threshold = 0.5
-            print('\nThe most performant set of hyper-params for Random Forest are:')
             n = 20
             d = 15
             print(f'n = {n}')
             print(f'd = {d}')
-
-            rndf = RandomForestClassifier(
-                n_jobs=-1,
-                max_depth=d,
-                n_estimators=n,
-                criterion='entropy',
-                random_state=RANDOM_STATE
+            rndf = Pipeline(
+                steps=[
+                    ("preprocessor", preprocessor), 
+                    ("classifier", RandomForestClassifier(
+                       n_jobs=-1,
+                        max_depth=d,
+                        n_estimators=n,
+                        criterion='entropy',
+                        random_state=RANDOM_STATE
+                    ))
+                ]
             )
             rndf.fit(x_train, y_train)
             probabilities = rndf.predict_proba(x_test)

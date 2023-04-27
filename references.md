@@ -85,3 +85,6 @@ and from an application point of view"
     - For multiclass problems, only ‘newton-cg’, ‘sag’, ‘saga’ and ‘lbfgs’ handle multinomial loss;
     - ‘liblinear’ is limited to one-versus-rest schemes.
     - ‘newton-cholesky’ is a good choice for n_samples >> n_features, especially with one-hot encoded categorical features with rare categories. Note that it is limited to binary classification and the one-versus-rest reduction for multiclass classification. Be aware that the memory usage of this solver has a quadratic dependency on n_features because it explicitly computes the Hessian matrix.
+
+## Scikit learn Pipeline
+- https://scikit-learn.org/0.16/modules/generated/sklearn.pipeline.Pipeline.html

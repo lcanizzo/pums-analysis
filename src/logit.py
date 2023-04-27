@@ -4,8 +4,8 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectPercentile, chi2
 from classification_utils import print_accuracy, print_confusion_matrix, \
@@ -27,11 +27,12 @@ def main():
         random_state=0
     )
 
-    # Prepare imputer, encoder, and categorical feature selection
+    # Prepare imputer, scaler / encoder, and categorical feature selection
     numeric_features = get_continuous_cols(df)
     numeric_transformer = Pipeline(
         steps=[
-            ("imputer", SimpleImputer(strategy="median"))
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler())
         ]
     )
 
@@ -40,7 +41,7 @@ def main():
         steps=[
             ("imputer", SimpleImputer(strategy="most_frequent")),
             ("encoder", OneHotEncoder(handle_unknown="ignore")),
-            ("selector", SelectPercentile(chi2, percentile=50)),
+            ("selector", SelectPercentile(chi2, percentile=25)),
         ]
     )
 
@@ -52,45 +53,18 @@ def main():
         sparse_threshold=0
     )
 
-    # Gaussian Naive Bayes
-    gaussian = Pipeline(
+    # Logistic Regression
+    logit = Pipeline(
         steps=[
             ("preprocessor", preprocessor), 
-            ("classifier", GaussianNB())
+            ("classifier", LogisticRegression(solver='newton-cholesky', n_jobs=-1))
         ]
     )
 
-    gaussian.fit(X_train, y_train)
-    y_pred = gaussian.predict(X_test)
+    y_pred = logit.fit(X_train, y_train).predict(X_test)
 
     print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Gaussian Naive Bayes")
-
-    # Multinomial Naive Bayes
-    multinomial = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor), 
-            ("classifier", MultinomialNB())
-        ]
-    )
-
-    y_pred = multinomial.fit(X_train, y_train).predict(X_test)
-
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Multinomial Naive Bayes")
-
-    # Bernoulli Naive Bayes
-    bernoulli = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor), 
-            ("classifier", BernoulliNB())
-        ]
-    )
-
-    y_pred = bernoulli.fit(X_train, y_train).predict(X_test)
-
-    print_accuracy(y_pred, y_test)
-    print_confusion_matrix(y_pred, y_test, "Bernoulli Naive Bayes")
+    print_confusion_matrix(y_pred, y_test, "Logit")
 
 if __name__ == '__main__':
     time_execution(main)
