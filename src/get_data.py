@@ -4,7 +4,7 @@ Functions to load historical data from census PUMS
 """
 #%%
 from multiprocessing import Pool
-from _constants import RECENT_YEARS, TYPES, COMBINATIONS
+from _constants import YEARS, TYPES, COMBINATIONS
 from ftplib import FTP
 from ftp_utils import base_path, extract_csv
 
@@ -37,7 +37,7 @@ def extract_file(combination):
 
 
 def main():
-    print(f'years: {RECENT_YEARS}')
+    print(f'years: {YEARS}')
     print(f'types: {TYPES}')
     with Pool() as pool:
         try:

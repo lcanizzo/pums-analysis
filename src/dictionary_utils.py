@@ -4,7 +4,7 @@ Prepares PUMS Data-Dict CVS for use as panda data frames.
 # %%
 import pandas as pd
 import json
-from _constants import RECENT_YEARS
+from _constants import YEARS
 
 # dict.column.value
 zero_prefix_rules = {
@@ -219,7 +219,7 @@ def split_dictionaries():
     """
     dictionaries = set([])
 
-    for year in RECENT_YEARS:
+    for year in YEARS:
         if year > 2017:
             dictionaries.add(year)
         elif year > 2012:
