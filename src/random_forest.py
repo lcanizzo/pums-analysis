@@ -1,6 +1,6 @@
 """
 Runs random forest tree classification with and testing of hyper-params to
-classify test data on whether persons make more than 40k a year.
+classify test data on whether persons make more than 50k a year.
 """
 
 #%%
@@ -47,8 +47,8 @@ np.random.seed(0)
 # Train test split
 df = pd.read_csv('./compiled_data/staged/all_transformed.csv')
 
-features_x = df.drop(['income_over_40k'], axis=1)
-class_y = df['income_over_40k']
+features_x = df.drop(['income_over_50k'], axis=1)
+class_y = df['income_over_50k']
 x_train, x_test, y_train, y_test = train_test_split(
     features_x,
     class_y,

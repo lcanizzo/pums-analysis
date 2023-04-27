@@ -44,7 +44,7 @@ The `TYPES` and `COMBINATIONS` declarations should not be modified, but to speed
 - [__`python`__ `transform.py`] Transforms values & column names, assigns class label column.
     - Takes the raw data downloaded from the census burea and first reduces the included columns (initial some 513) to a smaller set of the 53 defined in `configs/col_name_map.csv` while updating column names to be human-readable.
     - Assigns values based on column encodings as defined in the included dictionaries from the census burea.
-    - Produces a label for the target class `income_over_40k` based on the `UnadjustedTotalPersonIncome` column.
+    - Produces a label for the target class `income_over_50k` based on the `UnadjustedTotalPersonIncome` column.
     - Bins `AvgHoursWorkedPerWeek` in a new `hours_worked` column.
     - Stores staged data with and without the class value (`UnadjustedTotalPersonIncome`) for use in classification and visualizations.
 
